@@ -14,7 +14,7 @@ public class Disarm extends Effect {
 		
 			try {
 				c.getAbilities().add(new DamagingAbility("Punch", 0, 1, 1, AreaOfEffect.SINGLETARGET, 1, 50));
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 				
 			}
 		

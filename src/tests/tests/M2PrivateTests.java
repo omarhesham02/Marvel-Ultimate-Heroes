@@ -1860,10 +1860,7 @@ public class M2PrivateTests {
 			int expectedValue1 = (int) (randomSpeed * 1.2);
 			int expectedValue2 = (int) (randomSpeed + randomSpeed * 0.2);
 
-			boolean flag = true;
-			if (!(expectedValue1 == (int) f.get(championObject) || expectedValue2 == (int) f.get(championObject))) {
-				flag = false;
-			}
+			boolean flag = expectedValue1 == (int) f.get(championObject) || expectedValue2 == (int) f.get(championObject);
 
 			assertTrue("The method \"" + "apply" + "\" in class " + embraceObject.getClass().getSimpleName()
 					+ " should set the correct value of variable \"" + "speed" + "\".", flag);
@@ -1987,7 +1984,7 @@ public class M2PrivateTests {
 		int max = 4;
 		int min = 3;
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randAmout = (int) (Math.random() * 30) + 10;
 		Object ability = createDmgAbility("h", 10, 2, randomRange, "DIRECTIONAL", 10, randAmout);
 
@@ -2043,7 +2040,7 @@ public class M2PrivateTests {
 		Object ability = createDmgAbility("h", 10, 2, randomRange, "DIRECTIONAL", 10, randAmout);
 
 		int randX = (int) Math.floor(Math.random() * (3 - 1 + 1) + 1);
-		int randY = (int) Math.floor(Math.random() * (2 - 0 + 1) + 0);
+		int randY = (int) Math.floor(Math.random() * (2 + 1) + 0);
 
 		Object firstPlayer = createPlayer("1");
 		Object secondPlayer = createPlayer("2");
@@ -2080,7 +2077,7 @@ public class M2PrivateTests {
 			m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath), Class.forName(directionPath));
 			m2.invoke(game, ability, returnRightDirection());
 
-			int expected = (values.get(0) - randAmout < 0) ? 0 : values.get(0) - randAmout;
+			int expected = Math.max(values.get(0) - randAmout, 0);
 			assertEquals("Casting right damaging ability is not applied correctly, should affect covers' HP", expected,
 					returnHp(cover));
 
@@ -2088,7 +2085,7 @@ public class M2PrivateTests {
 					"Casting right damaging ability is not applied correctly, should not affect the current champion's HP",
 					(int) (values.get(1)), returnHp(champ));
 
-			expected = (values.get(2) - randAmout < 0) ? 0 : values.get(2) - randAmout;
+			expected = Math.max(values.get(2) - randAmout, 0);
 			assertEquals(
 					"Casting right damaging ability is not applied correctly, should affect all targets within range, target's HP",
 					expected, returnHp(myTeam.get(1)));
@@ -2143,11 +2140,11 @@ public class M2PrivateTests {
 			m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath), Class.forName(directionPath));
 			m2.invoke(game, ability, returnDownDirection());
 
-			int expected = (rand1 - randAmout < 0) ? 0 : rand1 - randAmout;
+			int expected = Math.max(rand1 - randAmout, 0);
 
 			assertEquals("Casting down damaging ability on target within range should update target's HP", expected,
 					returnHp(myTeam.get(1)));
-			expected = (rand2 - randAmout < 0) ? 0 : rand2 - randAmout;
+			expected = Math.max(rand2 - randAmout, 0);
 			assertEquals("Casting down damaging ability on target within range should update target's HP", expected,
 					returnHp(myTeam.get(2)));
 
@@ -2165,7 +2162,7 @@ public class M2PrivateTests {
 		int max = 1;
 		int min = 0;
 		int randX = (int) Math.floor(Math.random() * (max - min + 1) + min);
-		int randY = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randY = (int) Math.floor(Math.random() * (4 + 1) + 0);
 
 		int randAmout = (int) (Math.random() * 30) + 10;
 		Object ability = createDmgAbility("h", 10, 2, randomRange, "DIRECTIONAL", 10, randAmout);
@@ -2223,7 +2220,7 @@ public class M2PrivateTests {
 		int max = 1;
 		int min = 0;
 		int randX = (int) Math.floor(Math.random() * (max - min + 1) + min);
-		int randY = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randY = (int) Math.floor(Math.random() * (4 + 1) + 0);
 
 		int randHealing = (int) (Math.random() * 30) + 10;
 		Object ability = createHealingAbility("h", 10, 2, randomRange, "DIRECTIONAL", 10, randHealing);
@@ -2326,8 +2323,7 @@ public class M2PrivateTests {
 					"Casting down healing ability is not applied correctly, should not affect the current champion's HP",
 					(int) (values.get(1)), returnHp(champ));
 
-			int expected = (values.get(2) + randHealing > returnMaxHp(myTeam.get(1))) ? returnMaxHp(myTeam.get(1))
-					: values.get(2) + randHealing;
+			int expected = Math.min(values.get(2) + randHealing, returnMaxHp(myTeam.get(1)));
 			assertEquals(
 					"Casting down healing ability is not applied correctly, should affect all targets within range, target's HP",
 					expected, returnHp(myTeam.get(1)));
@@ -2347,7 +2343,7 @@ public class M2PrivateTests {
 		int max = 4;
 		int min = 3;
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randHealing = (int) (Math.random() * 30) + 10;
 		Object ability = createHealingAbility("h", 10, 2, randomRange, "DIRECTIONAL", 10, randHealing);
 
@@ -2381,13 +2377,11 @@ public class M2PrivateTests {
 			m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath), Class.forName(directionPath));
 			m2.invoke(game, ability, returnLeftDirection());
 
-			int expected = (rand1 + randHealing > returnMaxHp(myTeam.get(1))) ? returnMaxHp(myTeam.get(1))
-					: rand1 + randHealing;
+			int expected = Math.min(rand1 + randHealing, returnMaxHp(myTeam.get(1)));
 
 			assertEquals("Casting left healing ability on target within range should update target's HP", expected,
 					returnHp(myTeam.get(1)));
-			expected = (rand2 + randHealing > returnMaxHp(myTeam.get(2))) ? returnMaxHp(myTeam.get(2))
-					: rand2 + randHealing;
+			expected = Math.min(rand2 + randHealing, returnMaxHp(myTeam.get(2)));
 			assertEquals("Casting left healing ability on target within range should update target's HP", expected,
 					returnHp(myTeam.get(2)));
 
@@ -2406,7 +2400,7 @@ public class M2PrivateTests {
 		Object ability = createHealingAbility("h", 10, 2, randomRange, "DIRECTIONAL", 10, randHealing);
 		int max = 1;
 		int min = 0;
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
 
 		Object firstPlayer = createPlayer("1");
@@ -2462,7 +2456,7 @@ public class M2PrivateTests {
 		int max = 4;
 		int min = 3;
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		Object effect = createSheildEffect(2);
 		Object ability = createCCAbility("h", 10, 2, randomRange, "DIRECTIONAL", 1, effect);
 
@@ -2522,7 +2516,7 @@ public class M2PrivateTests {
 		int max = 4;
 		int min = 3;
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		Object effect = createSheildEffect(2);
 		Object ability = createCCAbility("h", 10, 2, randomRange, "DIRECTIONAL", 1, effect);
 
@@ -2650,7 +2644,7 @@ public class M2PrivateTests {
 		int randomRange = 3;
 		int max = 1;
 		int min = 0;
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
 		Object effect = createStunEffect(1);
 		Object ability = createCCAbility("h", 10, 2, randomRange, "DIRECTIONAL", 1, effect);
@@ -2908,7 +2902,7 @@ public class M2PrivateTests {
 		int randomRange = (int) (Math.random() * 2) + 1;
 		Object ability = createDmgAbility("h", 10, 2, randomRange, "DIRECTIONAL", 1, 10);
 
-		int randX = (int) Math.floor(Math.random() * (3 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (3 + 1) + 0);
 		int randY = (int) Math.floor(Math.random() * (4 - 3 + 1) + 3);
 
 		Object firstPlayer = createPlayer("1");
@@ -3101,7 +3095,7 @@ public class M2PrivateTests {
 		int max = 4;
 		int min = 3;
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randAmount = (int) (Math.random() * 30) + 10;
 		int randomCooldown = (int) (Math.random() * 2) + 2;
 		Object ability = createDmgAbility("h", 10, randomCooldown, randomRange, "DIRECTIONAL", 1, randAmount);
@@ -3233,7 +3227,7 @@ public class M2PrivateTests {
 		Object ability = createCCAbility("", randomMana, 1, 1, "SINGLETARGET", 10, effect);
 		int max = 1;
 		int min = 0;
-		int randY = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randY = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randX = (int) Math.floor(Math.random() * (max - min + 1) + min);
 
 		Object firstPlayer = createPlayer("1");
@@ -3281,7 +3275,7 @@ public class M2PrivateTests {
 		Object ability = createCCAbility("", 1, 2, 2, "SINGLETARGET", randomRequiredActionPoints, effect);
 		int max = 1;
 		int min = 0;
-		int randY = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randY = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randX = (int) Math.floor(Math.random() * (max - min + 1) + min);
 
 		Object firstPlayer = createPlayer("1");
@@ -3329,7 +3323,7 @@ public class M2PrivateTests {
 
 		int max = 1;
 		int min = 0;
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
 
 		Object firstPlayer = createPlayer("1");
@@ -3375,7 +3369,7 @@ public class M2PrivateTests {
 		Object ability = createDmgAbility("", randomMana, 1, 1, "SINGLETARGET", 10, 100);
 		int max = 4;
 		int min = 3;
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
 
 		Object firstPlayer = createPlayer("1");
@@ -3633,7 +3627,7 @@ public class M2PrivateTests {
 
 		int max = 1;
 		int min = 0;
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
 
 		Object firstPlayer = createPlayer("1");
@@ -3680,7 +3674,7 @@ public class M2PrivateTests {
 		Object ability = createDmgAbility("", randomMana, 1, 1, "DIRECTIONAL", 10, 100);
 		int max = 4;
 		int min = 3;
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
 
 		Object firstPlayer = createPlayer("1");
@@ -3729,7 +3723,7 @@ public class M2PrivateTests {
 		Object ability = createCCAbility("", 1, 2, 2, "DIRECTIONAL", randomRequiredActionPoints, effect);
 		int max = 4;
 		int min = 3;
-		int randY = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randY = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randX = (int) Math.floor(Math.random() * (max - min + 1) + min);
 
 		Object firstPlayer = createPlayer("1");
@@ -3777,7 +3771,7 @@ public class M2PrivateTests {
 		Object ability = createCCAbility("", randomMana, 1, 1, "DIRECTIONAL", 10, effect);
 		int max = 1;
 		int min = 0;
-		int randY = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randY = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randX = (int) Math.floor(Math.random() * (max - min + 1) + min);
 
 		Object firstPlayer = createPlayer("1");
@@ -3923,8 +3917,8 @@ public class M2PrivateTests {
 		// Add the current champ to the turnOrder
 		Object champ = createRandomHero();
 
-		int randX = (int) Math.floor(Math.random() * (2 - 0 + 1) + 0);
-		int randY = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (2 + 1) + 0);
+		int randY = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randomRange = (int) Math.floor(Math.random() * (2 - 1 + 1) + 1);
 		int randAmount = (int) (Math.random() * 30) + 10;
 
@@ -3959,8 +3953,7 @@ public class M2PrivateTests {
 			m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath), int.class, int.class);
 			m2.invoke(game, ability, rX, randY);
 
-			int expected = ((randHP + randAmount) > returnMaxHp(team.get(1))) ? returnMaxHp(team.get(1))
-					: (randHP + randAmount);
+			int expected = Math.min((randHP + randAmount), returnMaxHp(team.get(1)));
 
 			assertEquals("Casting single target healing effect is not applied correctly, target's HP", expected,
 					returnHp(team.get(1)));
@@ -3979,7 +3972,7 @@ public class M2PrivateTests {
 		Object champ = createRandomHero();
 
 		int randX = (int) Math.floor(Math.random() * (4 - 3 + 1) + 3);
-		int randY = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randY = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randomRange = 1;
 		int randAmount = (int) (Math.random() * 30) + 10;
 
@@ -4000,7 +3993,7 @@ public class M2PrivateTests {
 		int max = randX - randomRange - 1;
 		int min = 0;
 		int rX = (int) Math.floor(Math.random() * (max - min + 1) + min);
-		int rY = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int rY = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randHP = (int) (Math.random() * 30) + 10;
 
 		setObjectHP(team.get(1), randHP);
@@ -4080,7 +4073,7 @@ public class M2PrivateTests {
 		Object champ = createRandomHero();
 
 		int randX = (int) Math.floor(Math.random() * (3 - 1 + 1) + 1);
-		int randY = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randY = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randomRange = 1;
 
 		Object firstPlayer = createPlayer("1");
@@ -4131,7 +4124,7 @@ public class M2PrivateTests {
 		Object champ = createRandomHero();
 
 		int randY = (int) Math.floor(Math.random() * (4 - 3 + 1) + 3);
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randomRange = (int) Math.floor(Math.random() * (3 - 1 + 1) + 1);
 		int randAmount = (int) (Math.random() * 30) + 10;
 
@@ -4282,8 +4275,8 @@ public class M2PrivateTests {
 		// Add the current champ to the turnOrder
 		Object champ = createRandomHero();
 
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
-		int randY = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
+		int randY = (int) Math.floor(Math.random() * (4 + 1) + 0);
 		int randomRange = (int) Math.floor(Math.random() * (3 - 1 + 1) + 1);
 		int randAmount = (int) (Math.random() * 30) + 10;
 
@@ -4310,7 +4303,7 @@ public class M2PrivateTests {
 			m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath), int.class, int.class);
 			m2.invoke(game, ability, randX, randY);
 
-			int expected = ((randHP + randAmount) > returnMaxHp(champ)) ? returnMaxHp(champ) : (randHP + randAmount);
+			int expected = Math.min((randHP + randAmount), returnMaxHp(champ));
 
 			assertEquals("Casting single target healing ability should be applied on current champion's HP", expected,
 					returnHp(champ));
@@ -4364,17 +4357,17 @@ public class M2PrivateTests {
 			Method m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath));
 			m2.invoke(game, ability);
 
-			int expected = ((randHp + randAmout) > returnMaxHp(champ)) ? returnMaxHp(champ) : (randHp + randAmout);
+			int expected = Math.min((randHp + randAmout), returnMaxHp(champ));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on current champ, current HP",
 					expected, returnHp(champ));
 
-			expected = ((randomHp + randAmout) > returnMaxHp(champ2)) ? returnMaxHp(champ2) : (randomHp + randAmout);
+			expected = Math.min((randomHp + randAmout), returnMaxHp(champ2));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on team members whithin range, current HP",
 					expected, returnHp(champ2));
 
-			expected = ((randomHp2 + randAmout) > returnMaxHp(champ3)) ? returnMaxHp(champ3) : (randomHp2 + randAmout);
+			expected = Math.min((randomHp2 + randAmout), returnMaxHp(champ3));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on team members whithin range, current HP",
 					expected, returnHp(champ3));
@@ -4426,17 +4419,17 @@ public class M2PrivateTests {
 			Method m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath));
 			m2.invoke(game, ability);
 
-			int expected = ((randHp + randAmout) > returnMaxHp(champ)) ? returnMaxHp(champ) : (randHp + randAmout);
+			int expected = Math.min((randHp + randAmout), returnMaxHp(champ));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on current champ, current HP",
 					expected, returnHp(champ));
 
-			expected = ((randomHp + randAmout) > returnMaxHp(champ2)) ? returnMaxHp(champ2) : (randomHp + randAmout);
+			expected = Math.min((randomHp + randAmout), returnMaxHp(champ2));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on team members whithin range, current HP",
 					expected, returnHp(champ2));
 
-			expected = ((randomHp2 + randAmout) > returnMaxHp(champ3)) ? returnMaxHp(champ3) : (randomHp2 + randAmout);
+			expected = Math.min((randomHp2 + randAmout), returnMaxHp(champ3));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on team members whithin range, current HP",
 					expected, returnHp(champ3));
@@ -4488,17 +4481,17 @@ public class M2PrivateTests {
 			Method m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath));
 			m2.invoke(game, ability);
 
-			int expected = ((randHp + randAmout) > returnMaxHp(champ)) ? returnMaxHp(champ) : (randHp + randAmout);
+			int expected = Math.min((randHp + randAmout), returnMaxHp(champ));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on current champ, current HP",
 					expected, returnHp(champ));
 
-			expected = ((randomHp + randAmout) > returnMaxHp(champ2)) ? returnMaxHp(champ2) : (randomHp + randAmout);
+			expected = Math.min((randomHp + randAmout), returnMaxHp(champ2));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on team members whithin range, current HP",
 					expected, returnHp(champ2));
 
-			expected = ((randomHp2 + randAmout) > returnMaxHp(champ3)) ? returnMaxHp(champ3) : (randomHp2 + randAmout);
+			expected = Math.min((randomHp2 + randAmout), returnMaxHp(champ3));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on team members whithin range, current HP",
 					expected, returnHp(champ3));
@@ -4551,17 +4544,17 @@ public class M2PrivateTests {
 			Method m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath));
 			m2.invoke(game, ability);
 
-			int expected = ((randHp + randAmout) > returnMaxHp(champ)) ? returnMaxHp(champ) : (randHp + randAmout);
+			int expected = Math.min((randHp + randAmout), returnMaxHp(champ));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on current champ, current HP",
 					expected, returnHp(champ));
 
-			expected = ((randomHp + randAmout) > returnMaxHp(champ2)) ? returnMaxHp(champ2) : (randomHp + randAmout);
+			expected = Math.min((randomHp + randAmout), returnMaxHp(champ2));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on team members whithin range, current HP",
 					expected, returnHp(champ2));
 
-			expected = ((randomHp2 + randAmout) > returnMaxHp(champ3)) ? returnMaxHp(champ3) : (randomHp2 + randAmout);
+			expected = Math.min((randomHp2 + randAmout), returnMaxHp(champ3));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on team members whithin range, current HP",
 					expected, returnHp(champ3));
@@ -4614,7 +4607,7 @@ public class M2PrivateTests {
 			Method m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath));
 			m2.invoke(game, ability);
 
-			int expected = ((randHp + randAmout) > returnMaxHp(champ)) ? returnMaxHp(champ) : (randHp + randAmout);
+			int expected = Math.min((randHp + randAmout), returnMaxHp(champ));
 			assertEquals(
 					"Casting healing ability with TEAMTARGET is not applied correctly on current champ, current HP",
 					expected, returnHp(champ));
@@ -4992,12 +4985,12 @@ public class M2PrivateTests {
 					"Casting Healing ability with area of effect Surround should not be applied on the current champ, current HP",
 					champHP, returnHp(champ));
 
-			int expected = ((hp1 + randAmout) > returnMaxHp(champ2)) ? returnMaxHp(champ2) : (hp1 + randAmout);
+			int expected = Math.min((hp1 + randAmout), returnMaxHp(champ2));
 			assertEquals(
 					"Casting Healing ability should be applied on the same team champions within range, current HP",
 					expected, returnHp(champ2));
 
-			expected = ((hp2 + randAmout) > returnMaxHp(champ3)) ? returnMaxHp(champ3) : (hp2 + randAmout);
+			expected = Math.min((hp2 + randAmout), returnMaxHp(champ3));
 			assertEquals(
 					"Casting Healing ability should be applied on the same team champions within range, current HP",
 					expected, returnHp(champ3));
@@ -5102,12 +5095,12 @@ public class M2PrivateTests {
 
 			Method m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath));
 			m2.invoke(game, ability);
-			int expected = ((hp1 + randAmout) > returnMaxHp(champ2)) ? returnMaxHp(champ2) : (hp1 + randAmout);
+			int expected = Math.min((hp1 + randAmout), returnMaxHp(champ2));
 			assertEquals(
 					"Casting Healing ability should be applied on the same team champions within range, current HP",
 					expected, returnHp(champ2));
 
-			expected = ((hp2 + randAmout) > returnMaxHp(champ3)) ? returnMaxHp(champ3) : (hp2 + randAmout);
+			expected = Math.min((hp2 + randAmout), returnMaxHp(champ3));
 			assertEquals(
 					"Casting Healing ability should be applied on the same team champions within range, current HP",
 					expected, returnHp(champ3));
@@ -5315,15 +5308,15 @@ public class M2PrivateTests {
 			Method m2 = game.getClass().getMethod("castAbility", Class.forName(abilitiesPath));
 			m2.invoke(game, ability);
 
-			int expected = ((hp1 - randAmout) < 0) ? 0 : (hp1 - randAmout);
+			int expected = Math.max((hp1 - randAmout), 0);
 			assertEquals(
 					"Casting damaging ability should be applied on the opponent team champions within range, current HP",
 					expected, returnHp(champ1));
-			expected = ((hp2 - randAmout) < 0) ? 0 : (hp2 - randAmout);
+			expected = Math.max((hp2 - randAmout), 0);
 			assertEquals(
 					"Casting damaging ability should be applied on the opponent team champions within range, current HP",
 					expected, returnHp(champ2));
-			expected = ((hp3 - randAmout) < 0) ? 0 : (hp3 - randAmout);
+			expected = Math.max((hp3 - randAmout), 0);
 			assertEquals(
 					"Casting damaging ability should be applied on the opponent team champions within range, current HP",
 					expected, returnHp(champ3));
@@ -5756,7 +5749,7 @@ public class M2PrivateTests {
 		int max = 4;
 		int min = 3;
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 
 		int randAmout = 20;
 		Object ability = createDmgAbility("h", 10, 2, randomRange, "DIRECTIONAL", 10, randAmout);
@@ -5809,7 +5802,7 @@ public class M2PrivateTests {
 		int max = 1;
 		int min = 0;
 		int randY = (int) Math.floor(Math.random() * (max - min + 1) + min);
-		int randX = (int) Math.floor(Math.random() * (4 - 0 + 1) + 0);
+		int randX = (int) Math.floor(Math.random() * (4 + 1) + 0);
 
 		int randAmout = 20;
 		Object ability = createDmgAbility("h", 10, 2, randomRange, "DIRECTIONAL", 10, randAmout);
@@ -6109,7 +6102,7 @@ public class M2PrivateTests {
 	@SuppressWarnings({ "unchecked" })
 	@Test(timeout = 3000)
 	public void testGetCurrentChampionLogic3() throws Exception {
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		newGame.get(2);
@@ -6224,7 +6217,7 @@ public class M2PrivateTests {
 	@Test(timeout = 3000)
 	public void testInvalidBorderMoveRight() throws Exception {
 
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -6333,14 +6326,14 @@ public class M2PrivateTests {
 			try {
 				Method m3= createdGame.getClass().getDeclaredMethod("move", Class.forName(directionPath));
 				m3.invoke(createdGame, Enum.valueOf((Class<Enum>) Class.forName(directionPath),"RIGHT"));
-				fail("Trying to move beyond a border, an exception should be thrown");;
+				fail("Trying to move beyond a border, an exception should be thrown");
 
 			} catch (NoSuchMethodException e) {
 				fail("Game class should have move method");
 			} 	catch(InvocationTargetException e) {
 				try {
 					if(!(Class.forName(UnallowedMovementException).equals(e.getCause().getClass())))
-						fail("Trying to move RIGHT beyond a border, an exception should be thrown");;
+						fail("Trying to move RIGHT beyond a border, an exception should be thrown");
 
 				} catch (ClassNotFoundException e1) {
 					 
@@ -6362,7 +6355,7 @@ public class M2PrivateTests {
 	@Test(timeout = 3000)
 	public void testInvalidMoveDown() throws Exception {
 
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -6503,7 +6496,7 @@ public class M2PrivateTests {
 	@Test(timeout = 3000)
 	public void testInvalidMoveObstacleCoverDown() throws Exception {
 
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -6648,7 +6641,7 @@ public class M2PrivateTests {
 	@Test(timeout = 3000)
 	public void testValidMoveUpBoardUpdated2() throws Exception {
 
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -6796,7 +6789,7 @@ public class M2PrivateTests {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test(timeout = 3000)
 	public void testprepareChampionTurns2() throws Exception {
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -6864,7 +6857,7 @@ public class M2PrivateTests {
 					for(int i = 0; i < firstTeam.size(); i++) {
 						Comparable champ = (Comparable) removeFromTurnOrder.invoke(turnOrder);
 						if(champ.compareTo(firstTeam.get(firstTeam.size()-1-i))!=0) {
-							System.out.println(champ.toString());
+							System.out.println(champ);
 
 							orderCorrect = false;
 
@@ -6907,7 +6900,7 @@ public class M2PrivateTests {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test(timeout = 3000)
 	public void testHeroAttackHeroLeft() throws Exception {
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -7159,7 +7152,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ1);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the antihero attacked by a hero is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -7298,7 +7291,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ1);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the villain attacked by a hero  is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -7436,7 +7429,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ3);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the hero attacked by a villain is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -7713,7 +7706,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ3);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the antihero attacked by a villain is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -7852,7 +7845,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ2);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the hero attacked by an antihero is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -7991,7 +7984,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ2);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the  villain attacked by an antihero is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -8505,10 +8498,6 @@ public class M2PrivateTests {
 									
 
 									for(int i = 0; i < secondPlayerTeam.size(); i++) {
-//										System.out.println(champ1);
-//										System.out.println(champ6);
-//										System.out.println("Here" + secondPlayerTeam.get(i));
-//										System.out.println("Champ 6 removed" + champ6);
 
 										if(secondPlayerTeam.get(i).equals(champ6)) {
 											fail("Champion should be removed from his player's team after being attacked if HP reaches 0.");
@@ -8556,7 +8545,7 @@ public class M2PrivateTests {
 	@SuppressWarnings({ "unchecked" })
 	@Test(timeout = 3000)
 	public void testEndTurnUpdatedDuration() throws Exception {
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -8714,7 +8703,7 @@ public class M2PrivateTests {
 	@Test(timeout = 3000)
 	public void testEndTurnRemovesStunnedChampion2() throws Exception {
 		
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -11105,7 +11094,7 @@ public class M2PrivateTests {
 	@SuppressWarnings({ "rawtypes" })
 
 	private void testConstructorInitialization(Object createdObject, String[] names, Object[] values)
-			throws NoSuchMethodException, SecurityException, IllegalArgumentException, IllegalAccessException {
+			throws SecurityException, IllegalArgumentException, IllegalAccessException {
 
 		for (int i = 0; i < names.length; i++) {
 
@@ -11160,13 +11149,13 @@ public class M2PrivateTests {
 		args[6] = int.class;
 		@SuppressWarnings("unchecked")
 		Object h = c.getConstructor(args)
-				.newInstance(new Object[] { (String) "hero2", (int) 1, (int) 2, (int) 3, (int) 4, // speed
-						(int) 5, (int) 6 });
+				.newInstance("hero2", 1, 2, 3, 4, // speed
+						5, 6);
 
 		@SuppressWarnings("unchecked")
 		Object h2 = c.getConstructor(args)
-				.newInstance(new Object[] { (String) "hero1", (int) 1, (int) 2, (int) 3, (int) 14, // speed
-						(int) 15, (int) 6 });
+				.newInstance("hero1", 1, 2, 3, 14, // speed
+						15, 6);
 		Method compareTo = h.getClass().getMethod("compareTo", Object.class);
 		int r = (int) compareTo.invoke(h, h2);
 		assertTrue(
@@ -11190,7 +11179,7 @@ public class M2PrivateTests {
 	}
 
 	private boolean isPositive(int i) {
-		return i > 0 ? true : false;
+		return i > 0;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -11289,8 +11278,7 @@ public class M2PrivateTests {
 		try {
 			c = Class.forName(directionPath);
 			Method valueOf = c.getMethod("valueOf", String.class);
-			Object value = valueOf.invoke(null, "UP");
-			return value;
+			return valueOf.invoke(null, "UP");
 		} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 
@@ -11305,8 +11293,7 @@ public class M2PrivateTests {
 		try {
 			c = Class.forName(directionPath);
 			Method valueOf = c.getMethod("valueOf", String.class);
-			Object value = valueOf.invoke(null, "DOWN");
-			return value;
+			return valueOf.invoke(null, "DOWN");
 		} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 
@@ -11321,8 +11308,7 @@ public class M2PrivateTests {
 		try {
 			c = Class.forName(directionPath);
 			Method valueOf = c.getMethod("valueOf", String.class);
-			Object value = valueOf.invoke(null, "RIGHT");
-			return value;
+			return valueOf.invoke(null, "RIGHT");
 		} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 
@@ -11337,8 +11323,7 @@ public class M2PrivateTests {
 		try {
 			c = Class.forName(directionPath);
 			Method valueOf = c.getMethod("valueOf", String.class);
-			Object value = valueOf.invoke(null, "LEFT");
-			return value;
+			return valueOf.invoke(null, "LEFT");
 		} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 
@@ -11503,8 +11488,7 @@ public class M2PrivateTests {
 		Method m1;
 		try {
 			m1 = createdGame.getClass().getMethod("getBoard");
-			Object[][] boardGame1 = (Object[][]) m1.invoke(createdGame);
-			return boardGame1;
+			return (Object[][]) m1.invoke(createdGame);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 
@@ -11528,8 +11512,7 @@ public class M2PrivateTests {
 	private Object createPlayer(String s) {
 		try {
 			Constructor<?> constructorFirstPlayer = Class.forName(playerPath).getConstructor(String.class);
-			Object firstPlayer = constructorFirstPlayer.newInstance(s);
-			return firstPlayer;
+			return constructorFirstPlayer.newInstance(s);
 
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
 
@@ -11560,8 +11543,7 @@ public class M2PrivateTests {
 		try {
 			gameConstructor = Class.forName(gamePath).getConstructor(Class.forName(playerPath),
 					Class.forName(playerPath));
-			Object createdGame = gameConstructor.newInstance(createPlayer("1"), createPlayer("2"));
-			return createdGame;
+			return gameConstructor.newInstance(createPlayer("1"), createPlayer("2"));
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
 
 			fail(e.getCause().getClass() + " occurred");
@@ -11587,8 +11569,7 @@ public class M2PrivateTests {
 		try {
 			gameConstructor = Class.forName(gamePath).getConstructor(Class.forName(playerPath),
 					Class.forName(playerPath));
-			Object createdGame = gameConstructor.newInstance(firstPlayer, secondPlayer);
-			return createdGame;
+			return gameConstructor.newInstance(firstPlayer, secondPlayer);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
 
 			fail(e.getCause().getClass() + " occurred");
@@ -11614,9 +11595,8 @@ public class M2PrivateTests {
 		try {
 			Constructor<?> constructorHeroChamp = Class.forName(heroPath).getConstructor(String.class, int.class,
 					int.class, int.class, int.class, int.class, int.class);
-			Object champ = constructorHeroChamp.newInstance(name, maxHP, mana, actions, speed, attackRange,
+			return constructorHeroChamp.newInstance(name, maxHP, mana, actions, speed, attackRange,
 					attackDamage);
-			return champ;
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11630,8 +11610,7 @@ public class M2PrivateTests {
 		try {
 			Constructor<?> constructorChamp = Class.forName(heroPath).getConstructor(String.class, int.class, int.class,
 					int.class, int.class, int.class, int.class);
-			Object champ = constructorChamp.newInstance("ironman", 100, 200, 300, 400, 500, 600);
-			return champ;
+			return constructorChamp.newInstance("ironman", 100, 200, 300, 400, 500, 600);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11644,8 +11623,7 @@ public class M2PrivateTests {
 		try {
 			Constructor<?> constructorChamp = Class.forName(antiHeroPath).getConstructor(String.class, int.class,
 					int.class, int.class, int.class, int.class, int.class);
-			Object champ = constructorChamp.newInstance("Deadpool", 100, 200, 300, 400, 500, 600);
-			return champ;
+			return constructorChamp.newInstance("Deadpool", 100, 200, 300, 400, 500, 600);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11658,8 +11636,7 @@ public class M2PrivateTests {
 		try {
 			Constructor<?> constructorChamp = Class.forName(villainPath).getConstructor(String.class, int.class,
 					int.class, int.class, int.class, int.class, int.class);
-			Object champ = constructorChamp.newInstance("Thanos", 100, 200, 300, 400, 500, 600);
-			return champ;
+			return constructorChamp.newInstance("Thanos", 100, 200, 300, 400, 500, 600);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11671,8 +11648,7 @@ public class M2PrivateTests {
 	private Object createDisarmEffect(int duration) {
 		try {
 			Constructor<?> effecrConstructor = Class.forName(disarmPath).getConstructor(int.class);
-			Object effect = effecrConstructor.newInstance(duration);
-			return effect;
+			return effecrConstructor.newInstance(duration);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11684,8 +11660,7 @@ public class M2PrivateTests {
 	private Object createDodgeEffect(int duration) {
 		try {
 			Constructor<?> effecrConstructor = Class.forName(DodgePath).getConstructor(int.class);
-			Object effect = effecrConstructor.newInstance(duration);
-			return effect;
+			return effecrConstructor.newInstance(duration);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11697,8 +11672,7 @@ public class M2PrivateTests {
 	private Object createPowerUpEffect(int duration) {
 		try {
 			Constructor<?> effecrConstructor = Class.forName(powerUpPath).getConstructor(int.class);
-			Object effect = effecrConstructor.newInstance(duration);
-			return effect;
+			return effecrConstructor.newInstance(duration);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11710,8 +11684,7 @@ public class M2PrivateTests {
 	private Object createSheildEffect(int duration) {
 		try {
 			Constructor<?> effecrConstructor = Class.forName(shieldPath).getConstructor(int.class);
-			Object effect = effecrConstructor.newInstance(duration);
-			return effect;
+			return effecrConstructor.newInstance(duration);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11723,8 +11696,7 @@ public class M2PrivateTests {
 	private Object createShockEffect(int duration) {
 		try {
 			Constructor<?> effecrConstructor = Class.forName(shockPath).getConstructor(int.class);
-			Object effect = effecrConstructor.newInstance(duration);
-			return effect;
+			return effecrConstructor.newInstance(duration);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11736,8 +11708,7 @@ public class M2PrivateTests {
 	private Object createSilenceEffect(int duration) {
 		try {
 			Constructor<?> effecrConstructor = Class.forName(silencePath).getConstructor(int.class);
-			Object effect = effecrConstructor.newInstance(duration);
-			return effect;
+			return effecrConstructor.newInstance(duration);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11749,8 +11720,7 @@ public class M2PrivateTests {
 	private Object createSpeedUpEffect(int duration) {
 		try {
 			Constructor<?> effecrConstructor = Class.forName(speedUpPath).getConstructor(int.class);
-			Object effect = effecrConstructor.newInstance(duration);
-			return effect;
+			return effecrConstructor.newInstance(duration);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11762,8 +11732,7 @@ public class M2PrivateTests {
 	private Object createStunEffect(int duration) {
 		try {
 			Constructor<?> stunEffecrConstructor = Class.forName(stunPath).getConstructor(int.class);
-			Object stunEffect = stunEffecrConstructor.newInstance(duration);
-			return stunEffect;
+			return stunEffecrConstructor.newInstance(duration);
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException
 				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -11780,8 +11749,7 @@ public class M2PrivateTests {
 
 			Method valueOf = c.getMethod("valueOf", String.class);
 			Object value = valueOf.invoke(null, areaOfEffect);
-			Object dmgAbility = dmgAbilityConstructor.newInstance("Shield throw", 140, 4, 1, value, 1, 150);
-			return dmgAbility;
+			return dmgAbilityConstructor.newInstance("Shield throw", 140, 4, 1, value, 1, 150);
 
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | InstantiationException e) {
@@ -11800,8 +11768,7 @@ public class M2PrivateTests {
 
 			Method valueOf = c.getMethod("valueOf", String.class);
 			Object value = valueOf.invoke(null, areaOfEffect);
-			Object healingAbility = healingAbilityConst.newInstance("I can do this all day", 10, 3, 1, value, 2, 150);
-			return healingAbility;
+			return healingAbilityConst.newInstance("I can do this all day", 10, 3, 1, value, 2, 150);
 
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | InstantiationException e) {
@@ -11820,9 +11787,8 @@ public class M2PrivateTests {
 
 			Method valueOf = c.getMethod("valueOf", String.class);
 			Object value = valueOf.invoke(null, areaOfEffect);
-			Object healingAbility = healingAbilityConst.newInstance(name, cost, baseCoolDown, castRadius, value,
+			return healingAbilityConst.newInstance(name, cost, baseCoolDown, castRadius, value,
 					required, healingAmount);
-			return healingAbility;
 
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | InstantiationException e) {
@@ -11841,9 +11807,8 @@ public class M2PrivateTests {
 
 			Method valueOf = c.getMethod("valueOf", String.class);
 			Object value = valueOf.invoke(null, areaOfEffect);
-			Object dmgAbility = dmgAbilityConstructor.newInstance(name, cost, baseCoolDown, castRadius, value, required,
+			return dmgAbilityConstructor.newInstance(name, cost, baseCoolDown, castRadius, value, required,
 					damageAmount);
-			return dmgAbility;
 
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | InstantiationException e) {
@@ -11863,9 +11828,8 @@ public class M2PrivateTests {
 
 			Method valueOf = c.getMethod("valueOf", String.class);
 			Object value = valueOf.invoke(null, areaOfEffect);
-			Object ccAbility = ccAbilityConstructor.newInstance(name, cost, baseCoolDown, castRadius, value, required,
+			return ccAbilityConstructor.newInstance(name, cost, baseCoolDown, castRadius, value, required,
 					effect);
-			return ccAbility;
 
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | InstantiationException e) {
@@ -11884,8 +11848,7 @@ public class M2PrivateTests {
 
 			Method valueOf = c.getMethod("valueOf", String.class);
 			Object value = valueOf.invoke(null, areaOfEffect);
-			Object ccAbility = ccAbilityConstructor.newInstance("Shield Up", 90, 0, 1, value, 1, effect);
-			return ccAbility;
+			return ccAbilityConstructor.newInstance("Shield Up", 90, 0, 1, value, 1, effect);
 
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | InstantiationException e) {
@@ -11901,8 +11864,7 @@ public class M2PrivateTests {
 		try {
 			Constructor<?> coverConstructor = Class.forName(coverPath).getConstructor(int.class, int.class);
 
-			Object cover = coverConstructor.newInstance(x, y);
-			return cover;
+			return coverConstructor.newInstance(x, y);
 
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | InstantiationException e) {
@@ -11968,10 +11930,10 @@ public class M2PrivateTests {
 
 		Character c = name.charAt(0);
 
-		String methodName = "get" + Character.toUpperCase(c) + name.substring(1, name.length());
+		String methodName = "get" + Character.toUpperCase(c) + name.substring(1);
 
 		if (value.getClass().equals(Boolean.class))
-			methodName = "is" + Character.toUpperCase(c) + name.substring(1, name.length());
+			methodName = "is" + Character.toUpperCase(c) + name.substring(1);
 
 		Method m = createdObject.getClass().getMethod(methodName);
 		assertEquals(
@@ -12040,7 +12002,7 @@ public class M2PrivateTests {
 		f.setAccessible(true);
 
 		Character c = name.charAt(0);
-		String methodName = "set" + Character.toUpperCase(c) + name.substring(1, name.length());
+		String methodName = "set" + Character.toUpperCase(c) + name.substring(1);
 		Method m = createdObject.getClass().getMethod(methodName, type);
 		m.invoke(createdObject, setValue);
 
@@ -12073,7 +12035,7 @@ public class M2PrivateTests {
 		f.setAccessible(true);
 
 		Character c = name.charAt(0);
-		String methodName = "set" + Character.toUpperCase(c) + name.substring(1, name.length());
+		String methodName = "set" + Character.toUpperCase(c) + name.substring(1);
 		Method m;
 		try {
 			m = createdObject.getClass().getMethod(methodName, type);

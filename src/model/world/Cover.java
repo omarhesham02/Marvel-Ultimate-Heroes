@@ -6,7 +6,7 @@ import java.util.Random;
 public class Cover implements Damageable {
 	
 	      private int currentHP; // The Cover's current health points, must be >= 0
-	      private Point location; // The Cover's current location in Cartesian coordinates.
+	      private final Point location; // The Cover's current location in Cartesian coordinates.
 	
 	public Cover(int x, int y) {
 		
@@ -27,10 +27,7 @@ public class Cover implements Damageable {
 	}
 
 	public void setCurrentHP(int currentHP) {
-		if (currentHP < 0)
-			this.currentHP = 0;
-		else
-			this.currentHP = currentHP;
+		this.currentHP = Math.max(currentHP, 0);
 	}
 
 	public Point getLocation() {

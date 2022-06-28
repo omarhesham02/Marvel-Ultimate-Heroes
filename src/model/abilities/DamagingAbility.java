@@ -7,7 +7,7 @@ import model.world.Damageable;
 
 public class DamagingAbility extends Ability {
 	private int damageAmount;
-	public DamagingAbility(String name, int cost, int baseCoolDown, int castRange, AreaOfEffect area, int required,int damageAmount) throws Exception {
+	public DamagingAbility(String name, int cost, int baseCoolDown, int castRange, AreaOfEffect area, int required,int damageAmount) {
 		super(name, cost, baseCoolDown, castRange, area, required);
 		this.damageAmount = damageAmount;
 	}
@@ -25,11 +25,10 @@ public class DamagingAbility extends Ability {
 		this.damageAmount = damageAmount;
 	}
 
-	public void execute(ArrayList<Damageable> targets) throws CloneNotSupportedException {
+	public void execute(ArrayList<Damageable> targets) {
 		for (Damageable d : targets) {
 			
-			if (d instanceof Champion) {
-				Champion c = (Champion) d;
+			if (d instanceof Champion c) {
 				if (c.hasEffect("Shield")) {
 					c.removeEffectByName("Shield");
 					return;

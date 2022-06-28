@@ -43,9 +43,9 @@ public abstract class Effect implements Cloneable {
 	}
 	
 	
-	public abstract void apply(Champion c) throws CloneNotSupportedException;
+	public abstract void apply(Champion c);
 
-	public abstract void remove(Champion c) throws CloneNotSupportedException;
+	public abstract void remove(Champion c);
 	
 	
 }

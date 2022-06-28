@@ -8,7 +8,7 @@ public class Shock extends Effect {
 		super("Shock", duration, EffectType.DEBUFF);
 	}
 
-	public void apply (Champion c) throws CloneNotSupportedException  {
+	public void apply (Champion c) {
 
 		c.setSpeed((int) (c.getSpeed() * 0.90));
 		c.setAttackDamage((int) (c.getAttackDamage() * 0.90));

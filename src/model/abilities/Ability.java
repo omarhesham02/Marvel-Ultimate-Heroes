@@ -2,20 +2,18 @@ package model.abilities;
 
 import java.util.ArrayList;
 
-import exceptions.AbilityUseException;
-import exceptions.NotEnoughResourcesException;
 import model.world.Damageable;
 
 public abstract class Ability {
-	private String name;
-	private int manaCost;
-	private int baseCooldown;
+	private final String name;
+	private final int manaCost;
+	private final int baseCooldown;
 	private int currentCooldown;
-	private int castRange;
-	private int requiredActionPoints;
-	private AreaOfEffect castArea;
+	private final int castRange;
+	private final int requiredActionPoints;
+	private final AreaOfEffect castArea;
 	
-	public Ability(String name, int cost, int baseCoolDown, int castRange, AreaOfEffect area, int required) throws Exception {
+	public Ability(String name, int cost, int baseCoolDown, int castRange, AreaOfEffect area, int required) {
 		
 		this.name = name;
 		this.manaCost = cost;
@@ -50,10 +48,7 @@ public abstract class Ability {
 		
 		if (currentCooldown <= 0)
 			this.currentCooldown = 0;
-		else if (currentCooldown > baseCooldown)
-			this.currentCooldown = baseCooldown;
-		else
-			this.currentCooldown = currentCooldown;
+		else this.currentCooldown = Math.min(currentCooldown, baseCooldown);
 		
 	}
 	public int getManaCost() {
@@ -72,7 +67,7 @@ public abstract class Ability {
 		return castArea;
 	}
 			
-	public abstract void execute (ArrayList<Damageable> targets) throws NotEnoughResourcesException, AbilityUseException, CloneNotSupportedException;
+	public abstract void execute (ArrayList<Damageable> targets) throws CloneNotSupportedException;
 	
 	
 }

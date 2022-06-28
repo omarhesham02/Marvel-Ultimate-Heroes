@@ -1,44 +1,41 @@
 package engine;
 
-import java.awt.Point;
+import exceptions.*;
+import model.abilities.*;
+import model.effects.*;
+import model.world.*;
 
+import java.awt.*;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
-import exceptions.*;
-import model.abilities.*;
-import model.world.*;
-import model.effects.*;
-
 public class Game {
 
-	private Player firstPlayer;
-	private Player secondPlayer;
+	private final Player firstPlayer;
+	private final Player secondPlayer;
 	private boolean firstLeaderAbilityUsed;
 	private boolean secondLeaderAbilityUsed;
 	
-	private Object[][] board;
+	private final Object[][] board;
 	private static ArrayList<Champion> availableChampions;
 	private static ArrayList<Ability> availableAbilities;
-	private PriorityQueue turnOrder;
+	private final PriorityQueue turnOrder;
 	
 	private static final int BOARDHEIGHT = 5;
 	private static final int BOARDWIDTH = 5;
 	
 	
-	public Game (Player firstPlayer, Player secondPlayer) throws CloneNotSupportedException  {
+	public Game (Player firstPlayer, Player secondPlayer) {
 
 		this.firstPlayer = firstPlayer;
 		this.secondPlayer = secondPlayer;
 		
-		availableChampions = new ArrayList<Champion>();
-		availableAbilities = new ArrayList<Ability>();
+		availableChampions = new ArrayList<>();
+		availableAbilities = new ArrayList<>();
 		
 		
 		board = new Object[BOARDWIDTH][BOARDHEIGHT];
@@ -161,88 +158,41 @@ public class Game {
 			int baseCoolDown = Integer.parseInt(readAbilities[4]);
 			AreaOfEffect area = AreaOfEffect.valueOf(readAbilities[5]);
 			int requiredActionsPerTurn = Integer.parseInt(readAbilities[6]);
-			 
-			
-			switch (type) {
-			
-				case "CC":
-					
-				String effectName = readAbilities[7];
-				int effectDuration = Integer.parseInt(readAbilities[8]);
-				
-				Effect effect = null;
-			
-				
-				switch (effectName) {
-				
-				case "Disarm":
-					Disarm di = new Disarm(effectDuration); 
-					effect = di;
-					break;
-				
-				case "Dodge": 
-					Dodge dg = new Dodge(effectDuration); 
-					effect = dg;
-					break;
-				case "Embrace":
-					Embrace em = new Embrace(effectDuration); 
-					effect = em;
-					break;
-				
-				case "PowerUp":
-					PowerUp pu = new PowerUp(effectDuration); 
-					effect = pu;
-					break;
-				case "Root":
-					Root ro = new Root(effectDuration); 
-					effect = ro;
-					break;
-				case "Shield":
-					Shield sh = new Shield(effectDuration); 
-					effect = sh;
-					break;
-				case "Shock":
-					Shock so = new Shock(effectDuration); 
-					effect = so;
-					break;
-				case "Silence":
-					Silence si = new Silence(effectDuration);
-					effect = si;
-					break;
-				case "SpeedUp":
-					SpeedUp su = new SpeedUp(effectDuration); 
-					effect = su;
-					break;
-				case "Stun":
-					Stun st = new Stun(effectDuration); 
-					effect = st;
-					break;
-				}
-				
-				CrowdControlAbility CC = new CrowdControlAbility(name, manaCost, baseCoolDown, castRange, area, requiredActionsPerTurn, effect);
-		
-					availableAbilities.add(CC);
-					break;
-					
-			case "DMG":
-		
-				int damageAmount = Integer.parseInt(readAbilities[7]);
-				
-				DamagingAbility DMG = new DamagingAbility(name, manaCost, baseCoolDown, castRange, area, requiredActionsPerTurn, damageAmount);
-				
-					availableAbilities.add(DMG);
-					break;
-			
-			case "HEL":
-		
-				int healAmount = Integer.parseInt(readAbilities[7]);
 
-				HealingAbility HEL = new HealingAbility(name, manaCost, baseCoolDown, castRange, area, requiredActionsPerTurn, healAmount);
-			
+
+			switch (type) {
+				case "CC" -> {
+					String effectName = readAbilities[7];
+					int effectDuration = Integer.parseInt(readAbilities[8]);
+					Effect effect;
+					switch (effectName) {
+						case "Disarm" -> effect = new Disarm(effectDuration);
+						case "Dodge" -> effect = new Dodge(effectDuration);
+						case "Embrace" -> effect = new Embrace(effectDuration);
+						case "PowerUp" -> effect = new PowerUp(effectDuration);
+						case "Root" -> effect = new Root(effectDuration);
+						case "Shield" -> effect = new Shield(effectDuration);
+						case "Shock" -> effect = new Shock(effectDuration);
+						case "Silence" -> effect = new Silence(effectDuration);
+						case "SpeedUp" -> effect = new SpeedUp(effectDuration);
+						case "Stun" -> effect = new Stun(effectDuration);
+						default -> throw new IllegalStateException("Unexpected value: " + effectName);
+					}
+					CrowdControlAbility CC = new CrowdControlAbility(name, manaCost, baseCoolDown, castRange, area, requiredActionsPerTurn, effect);
+					availableAbilities.add(CC);
+				}
+				case "DMG" -> {
+					int damageAmount = Integer.parseInt(readAbilities[7]);
+					DamagingAbility DMG = new DamagingAbility(name, manaCost, baseCoolDown, castRange, area, requiredActionsPerTurn, damageAmount);
+					availableAbilities.add(DMG);
+				}
+				case "HEL" -> {
+					int healAmount = Integer.parseInt(readAbilities[7]);
+					HealingAbility HEL = new HealingAbility(name, manaCost, baseCoolDown, castRange, area, requiredActionsPerTurn, healAmount);
 					availableAbilities.add(HEL);
-					break;
-				
-			 }
+				}
+				default -> throw new IllegalStateException("Unexpected value: " + type);
+			}
 		 }
 	}
 	 
@@ -273,44 +223,30 @@ public class Game {
 			String ability1name = readChampion[8];
 			String ability2name = readChampion[9];
 			String ability3name = readChampion[10];
-			
-		
-			
+
+
 			switch (type) {
-			
-			case "H":
-				
-				Hero H = new Hero(name, maxHP, mana, actions, speed, attackRange, attackDamage);
-				
-				setAbilities(ability1name, H.getAbilities());
-				setAbilities(ability2name, H.getAbilities());
-				setAbilities(ability3name, H.getAbilities());
-	
+				case "H" -> {
+					Hero H = new Hero(name, maxHP, mana, actions, speed, attackRange, attackDamage);
+					setAbilities(ability1name, H.getAbilities());
+					setAbilities(ability2name, H.getAbilities());
+					setAbilities(ability3name, H.getAbilities());
 					availableChampions.add(H);
-					break;
-					
-			case "V":
-				
-				Villain V = new Villain(name, maxHP, mana, actions, speed, attackRange, attackDamage);
-				
-				setAbilities(ability1name, V.getAbilities());
-				setAbilities(ability2name, V.getAbilities());
-				setAbilities(ability3name, V.getAbilities());
-				
+				}
+				case "V" -> {
+					Villain V = new Villain(name, maxHP, mana, actions, speed, attackRange, attackDamage);
+					setAbilities(ability1name, V.getAbilities());
+					setAbilities(ability2name, V.getAbilities());
+					setAbilities(ability3name, V.getAbilities());
 					availableChampions.add(V);
-					break;
-			
-			
-			case "A":
-				
-				AntiHero A = new AntiHero(name, maxHP, mana, actions, speed, attackRange, attackDamage);
-				
-				setAbilities(ability1name, A.getAbilities());
-				setAbilities(ability2name, A.getAbilities());
-				setAbilities(ability3name, A.getAbilities());
-				
+				}
+				case "A" -> {
+					AntiHero A = new AntiHero(name, maxHP, mana, actions, speed, attackRange, attackDamage);
+					setAbilities(ability1name, A.getAbilities());
+					setAbilities(ability2name, A.getAbilities());
+					setAbilities(ability3name, A.getAbilities());
 					availableChampions.add(A);
-					break;
+				}
 			}
 		}
 	}
@@ -320,16 +256,16 @@ public class Game {
 
 	
 	private static void setAbilities(String abilityName, ArrayList<Ability> abilityList) {
-		
-		 for (int i = 0; i < availableAbilities.size(); i++) {
-			 
-			 if (abilityList.size() >= 3)
-					return;
-			 
-			 if (availableAbilities.get(i).getName().equals(abilityName))	 // Fetches ability by abilityName from availableAbilities
-					 abilityList.add(availableAbilities.get(i));			//  and adds it to the provided abilityList of the Champion
 
-		 }
+		for (Ability availableAbility : availableAbilities) {
+
+			if (abilityList.size() >= 3)
+				return;
+
+			if (availableAbility.getName().equals(abilityName))     // Fetches ability by abilityName from availableAbilities
+				abilityList.add(availableAbility);            //  and adds it to the provided abilityList of the Champion
+
+		}
 	}
 	
 	
@@ -349,10 +285,7 @@ public class Game {
 	}
 	
 	private static boolean isValidPoint (Point p) {
-		if (p.x >= 0 && p.x <= 4 && p.y >= 0 && p.y <= 4)
-			return true;
-			
-			return false;
+		return p.x >= 0 && p.x <= 4 && p.y >= 0 && p.y <= 4;
 	}
 	
 	
@@ -380,29 +313,29 @@ public class Game {
 			case RIGHT:
 				for (int i = p.y + 1; i <= 4; i++) {
 					Damageable target = (Damageable) board[p.x][i];
-					if (target instanceof Damageable)
-						damageables.add((Damageable) target);
+					if (target != null)
+						damageables.add(target);
 				}
 				break;
 			case LEFT:
 				for (int i = p.y - 1; i >= 0; i--) {
 					Damageable target = (Damageable) board[p.x][i];
-					if (target instanceof Damageable)
-						damageables.add((Damageable) target);
+					if (target != null)
+						damageables.add(target);
 				}
 				break;
 			case UP:
 				for (int i = p.x + 1; i <= 4; i++) {
 					Damageable target = (Damageable) board[i][p.y];
-					if (target instanceof Damageable)
-						damageables.add((Damageable) target);
+					if (target != null)
+						damageables.add(target);
 				}
 				break;
 			case DOWN:
 				for (int i = p.x - 1; i >= 0; i--) {
 					Damageable target = (Damageable) board[i][p.y];
-					if (target instanceof Damageable)
-						damageables.add((Damageable) target);
+					if (target != null)
+						damageables.add(target);
 				}
 				break;
 			}
@@ -464,7 +397,7 @@ public class Game {
 		firstPlayer.getTeam().remove(c);
 		secondPlayer.getTeam().remove(c);
 		
-		Queue<Champion> aliveChamps = new LinkedList<Champion>();
+		Queue<Champion> aliveChamps = new LinkedList<>();
 		
 		while (!turnOrder.isEmpty()) {
 			Champion champion = (Champion) turnOrder.remove();
@@ -479,7 +412,7 @@ public class Game {
 		
 	}
 	
-	public void attack (Direction d) throws ChampionDisarmedException, NotEnoughResourcesException, AbilityUseException, CloneNotSupportedException {
+	public void attack (Direction d) throws ChampionDisarmedException, NotEnoughResourcesException, CloneNotSupportedException {
 		
 		Champion currChamp = getCurrentChampion();
 		Point currPoint = currChamp.getLocation();
@@ -507,9 +440,8 @@ public class Game {
 		
 		int	damage = currChamp.getAttackDamage();
 		
-		if (target instanceof Champion) {
-			Champion c = (Champion) target;
-			
+		if (target instanceof Champion c) {
+
 			if (c.hasEffect("Shield")) {
 				c.removeEffectByName("Shield");
 				currChamp.setCurrentActionPoints(currChamp.getCurrentActionPoints() - 2);
@@ -643,8 +575,7 @@ public class Game {
 					targets.add(currChamp);
 				} else if (a instanceof DamagingAbility) {
 					throw new InvalidTargetException();
-				} else if (a instanceof CrowdControlAbility) {
-					CrowdControlAbility CC = (CrowdControlAbility) a;
+				} else if (a instanceof CrowdControlAbility CC) {
 					Effect e = CC.getEffect();
 					
 					if (e.getType() == EffectType.DEBUFF)
@@ -677,8 +608,7 @@ public class Game {
 					}
 					
 					
-				} else if (a instanceof CrowdControlAbility) {
-					CrowdControlAbility CC = (CrowdControlAbility) a;
+				} else if (a instanceof CrowdControlAbility CC) {
 					Effect e = CC.getEffect();
 					
 					if (e.getType() == EffectType.DEBUFF) {
@@ -701,8 +631,7 @@ public class Game {
 			case SURROUND:
 				ArrayList<Point> ValidTargets = getValidTargetPoints(currPoint);
 				
-				if (a instanceof HealingAbility) {
-					HealingAbility ha = (HealingAbility) a;
+				if (a instanceof HealingAbility ha) {
 					for (Point p : ValidTargets) {
 						Damageable d = (Damageable) board[p.x][p.y];
 						
@@ -718,8 +647,7 @@ public class Game {
 					ha.execute(targets);
 				}
 				
-				else if (a instanceof DamagingAbility) {
-					DamagingAbility da = (DamagingAbility) a;
+				else if (a instanceof DamagingAbility da) {
 					for (Point p : ValidTargets) {
 						Damageable d = (Damageable) board[p.x][p.y];
 
@@ -736,8 +664,7 @@ public class Game {
 					}
 				}
 				
-				else if (a instanceof CrowdControlAbility) {
-					CrowdControlAbility CC = (CrowdControlAbility) a;
+				else if (a instanceof CrowdControlAbility CC) {
 					Effect e = CC.getEffect();
 					
 					for (Point p : ValidTargets) {
@@ -798,8 +725,7 @@ public class Game {
 		if (currChamp.getMana() < manaCost || currChamp.getCurrentActionPoints() < pointCost)
 			throw new NotEnoughResourcesException();
 
-		if (a instanceof HealingAbility) {
-			HealingAbility ha = (HealingAbility) a;
+		if (a instanceof HealingAbility ha) {
 			for (Damageable da : directionDamageables) {
 				if (getDistance(currPoint, da.getLocation()) <= castRange && getTeam().contains(da))
 					targets.add(da);
@@ -807,8 +733,7 @@ public class Game {
 			
 			ha.execute(targets);
 			
-		} else if (a instanceof DamagingAbility) {
-			DamagingAbility dm = (DamagingAbility) a;
+		} else if (a instanceof DamagingAbility dm) {
 			for (Damageable da : directionDamageables) {
 				if (getDistance(currPoint, da.getLocation()) <= castRange && (getEnemyTeam().contains(da) || da instanceof Cover))
 					targets.add(da);
@@ -816,8 +741,7 @@ public class Game {
 			
 			dm.execute(targets);
 			
-		} else if (a instanceof CrowdControlAbility) {
-			CrowdControlAbility CC = (CrowdControlAbility) a;
+		} else if (a instanceof CrowdControlAbility CC) {
 			Effect e = CC.getEffect();
 			
 			if (e.getType() == EffectType.DEBUFF) {
@@ -885,10 +809,9 @@ public class Game {
 		ArrayList<Champion> enemyTeam = getEnemyTeam();
 
 		
-		if (a instanceof HealingAbility) {
+		if (a instanceof HealingAbility ha) {
 			targets.add(target);
-			HealingAbility ha = (HealingAbility) a;
-			
+
 			if (target instanceof Cover)
 				throw new InvalidTargetException();
 			
@@ -897,10 +820,8 @@ public class Game {
 			else
 				throw new InvalidTargetException();
 			
-		} else if (a instanceof DamagingAbility) {
-			
-			DamagingAbility da = (DamagingAbility) a;
-			
+		} else if (a instanceof DamagingAbility da) {
+
 			if (enemyTeam.contains(target) || target instanceof Cover)
 				targets.add(target);
 			else
@@ -908,8 +829,7 @@ public class Game {
 			
 			da.execute(targets);
 			
-		} else if (a instanceof CrowdControlAbility) {
-			CrowdControlAbility CC = (CrowdControlAbility) a;
+		} else if (a instanceof CrowdControlAbility CC) {
 			Effect e = CC.getEffect();
 			
 			if (target instanceof Cover)
@@ -961,12 +881,10 @@ public class Game {
 		
 		
 		
-		if (leader instanceof Hero) {
-			Hero h = (Hero) leader;
+		if (leader instanceof Hero h) {
 			h.useLeaderAbility(team);
 			
-		} else if (leader instanceof Villain) {
-			Villain v = (Villain) leader;
+		} else if (leader instanceof Villain v) {
 			ArrayList<Champion> targets = new ArrayList<>();
 			
 			for (Champion c : enemyTeam) {
@@ -980,16 +898,15 @@ public class Game {
 				if (c.getCurrentHP() <= 0)
 					removeChampion(c);
 				}
-			} else if (leader instanceof AntiHero) {
+			} else if (leader instanceof AntiHero ah) {
 			ArrayList<Champion> allChampionsExceptLeaders = getAllChampions();
 			
 			allChampionsExceptLeaders.remove(firstPlayerLeader);
 			allChampionsExceptLeaders.remove(secondPlayerLeader);
-			
-			AntiHero ah = (AntiHero) leader;
+
 			ah.useLeaderAbility(allChampionsExceptLeaders);
 		}
-		
+
 		if (leader.equals(firstPlayerLeader))
 			firstLeaderAbilityUsed = true;
 		else 
@@ -1000,18 +917,16 @@ public class Game {
 	private ArrayList<Champion> getAllChampions() {
 		
 		ArrayList<Champion> allChampions = new ArrayList<>();
-		
-		for (Champion c : firstPlayer.getTeam()) 
-				allChampions.add(c);
-	
-		for (Champion c : secondPlayer.getTeam()) 
-				allChampions.add(c);
+
+		allChampions.addAll(firstPlayer.getTeam());
+
+		allChampions.addAll(secondPlayer.getTeam());
 		
 		return allChampions;
 	}
 	
 	
-	private void prepareChampionTurns() throws CloneNotSupportedException {
+	private void prepareChampionTurns() {
 		ArrayList<Champion> allChampions = getAllChampions();
 		
 		for (Champion c : allChampions) {

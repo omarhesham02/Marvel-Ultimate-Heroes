@@ -8,7 +8,7 @@ public class Silence extends Effect {
 		super("Silence", duration, EffectType.DEBUFF);
 	}
 
-	public void apply (Champion c) throws CloneNotSupportedException  {
+	public void apply (Champion c) {
 
 		c.setMaxActionPointsPerTurn(c.getMaxActionPointsPerTurn() + 2);
 		c.setCurrentActionPoints(c.getCurrentActionPoints() + 2);

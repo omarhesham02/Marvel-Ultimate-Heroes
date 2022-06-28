@@ -8,13 +8,13 @@ import model.effects.Embrace;
 
 public class Hero extends Champion {
 
-	public Hero(String name, int maxHP, int mana, int maxActions, int speed, int attackRange, int attackDamage) throws Exception {
+	public Hero(String name, int maxHP, int mana, int maxActions, int speed, int attackRange, int attackDamage) {
 		super(name, maxHP, mana, maxActions, speed, attackRange, attackDamage);
 		
 	}
 
 
-	public void useLeaderAbility(ArrayList<Champion> targets) throws CloneNotSupportedException  {
+	public void useLeaderAbility(ArrayList<Champion> targets) {
 		for (Champion c : targets) {
 			
 			ArrayList<Effect> effects = c.getAppliedEffects();

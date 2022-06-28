@@ -2,9 +2,9 @@ package engine;
 
 public class PriorityQueue {
  
-   private Comparable[] elements;
+   private final Comparable[] elements;
    private int nItems;
-   private int maxSize;
+   private final int maxSize;
 
    public PriorityQueue(int size){
       maxSize = size;

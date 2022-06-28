@@ -4,5 +4,5 @@ public enum Condition {
 	ACTIVE, 
 	INACTIVE,
 	ROOTED,
-	KNOCKEDOUT;
+	KNOCKEDOUT
 }

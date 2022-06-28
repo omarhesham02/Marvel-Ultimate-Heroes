@@ -7,9 +7,9 @@ import model.world.Damageable;
 
 public class CrowdControlAbility extends Ability {
 	
-	private Effect effect;
+	private final Effect effect;
 	
-	public CrowdControlAbility(String name, int cost, int baseCoolDown, int castRange, AreaOfEffect area, int required, Effect effect) throws Exception {
+	public CrowdControlAbility(String name, int cost, int baseCoolDown, int castRange, AreaOfEffect area, int required, Effect effect) {
 		super(name, cost, baseCoolDown, castRange, area, required);
 		this.effect = effect;
 	}
