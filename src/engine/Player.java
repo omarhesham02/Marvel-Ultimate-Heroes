@@ -6,9 +6,9 @@ import model.world.Champion;
 
 public class Player {
 	
-	private String name;
+	private final String name;
 	private Champion leader;
-	private ArrayList<Champion> team = new ArrayList<>();
+	private final ArrayList<Champion> team = new ArrayList<>();
 	
 	
 	public Player(String name) {

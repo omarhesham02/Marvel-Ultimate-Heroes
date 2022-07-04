@@ -1,20 +1,13 @@
 package tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
-import java.awt.Point;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.awt.*;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class M2PrivateTests {
 
@@ -1860,10 +1853,7 @@ public class M2PrivateTests {
 			int expectedValue1 = (int) (randomSpeed * 1.2);
 			int expectedValue2 = (int) (randomSpeed + randomSpeed * 0.2);
 
-			boolean flag = true;
-			if (!(expectedValue1 == (int) f.get(championObject) || expectedValue2 == (int) f.get(championObject))) {
-				flag = false;
-			}
+			boolean flag = expectedValue1 == (int) f.get(championObject) || expectedValue2 == (int) f.get(championObject);
 
 			assertTrue("The method \"" + "apply" + "\" in class " + embraceObject.getClass().getSimpleName()
 					+ " should set the correct value of variable \"" + "speed" + "\".", flag);
@@ -6109,7 +6099,7 @@ public class M2PrivateTests {
 	@SuppressWarnings({ "unchecked" })
 	@Test(timeout = 3000)
 	public void testGetCurrentChampionLogic3() throws Exception {
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		newGame.get(2);
@@ -6224,7 +6214,7 @@ public class M2PrivateTests {
 	@Test(timeout = 3000)
 	public void testInvalidBorderMoveRight() throws Exception {
 
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -6333,14 +6323,14 @@ public class M2PrivateTests {
 			try {
 				Method m3= createdGame.getClass().getDeclaredMethod("move", Class.forName(directionPath));
 				m3.invoke(createdGame, Enum.valueOf((Class<Enum>) Class.forName(directionPath),"RIGHT"));
-				fail("Trying to move beyond a border, an exception should be thrown");;
+				fail("Trying to move beyond a border, an exception should be thrown");
 
 			} catch (NoSuchMethodException e) {
 				fail("Game class should have move method");
 			} 	catch(InvocationTargetException e) {
 				try {
 					if(!(Class.forName(UnallowedMovementException).equals(e.getCause().getClass())))
-						fail("Trying to move RIGHT beyond a border, an exception should be thrown");;
+						fail("Trying to move RIGHT beyond a border, an exception should be thrown");
 
 				} catch (ClassNotFoundException e1) {
 					 
@@ -6362,7 +6352,7 @@ public class M2PrivateTests {
 	@Test(timeout = 3000)
 	public void testInvalidMoveDown() throws Exception {
 
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -6503,7 +6493,7 @@ public class M2PrivateTests {
 	@Test(timeout = 3000)
 	public void testInvalidMoveObstacleCoverDown() throws Exception {
 
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -6648,7 +6638,7 @@ public class M2PrivateTests {
 	@Test(timeout = 3000)
 	public void testValidMoveUpBoardUpdated2() throws Exception {
 
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -6796,7 +6786,7 @@ public class M2PrivateTests {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test(timeout = 3000)
 	public void testprepareChampionTurns2() throws Exception {
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -6864,7 +6854,7 @@ public class M2PrivateTests {
 					for(int i = 0; i < firstTeam.size(); i++) {
 						Comparable champ = (Comparable) removeFromTurnOrder.invoke(turnOrder);
 						if(champ.compareTo(firstTeam.get(firstTeam.size()-1-i))!=0) {
-							System.out.println(champ.toString());
+							System.out.println(champ);
 
 							orderCorrect = false;
 
@@ -6907,7 +6897,7 @@ public class M2PrivateTests {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test(timeout = 3000)
 	public void testHeroAttackHeroLeft() throws Exception {
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -7159,7 +7149,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ1);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the antihero attacked by a hero is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -7298,7 +7288,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ1);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the villain attacked by a hero  is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -7436,7 +7426,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ3);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the hero attacked by a villain is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -7713,7 +7703,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ3);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the antihero attacked by a villain is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -7852,7 +7842,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ2);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the hero attacked by an antihero is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -7991,7 +7981,7 @@ public class M2PrivateTests {
 					Method m4 = champ1.getClass().getMethod("getAttackDamage");
 					int attackDamage = (Integer) m4.invoke(champ2);
 
-					int extraDamage = (Integer) attackDamage/2;
+					int extraDamage = attackDamage /2;
 					int expectedHP = oldHP - (attackDamage + extraDamage);
 
 					assertTrue("The HP of the  villain attacked by an antihero is not updated correctly. Expected "  + expectedHP + " but was " + newHP+ ".",
@@ -8556,7 +8546,7 @@ public class M2PrivateTests {
 	@SuppressWarnings({ "unchecked" })
 	@Test(timeout = 3000)
 	public void testEndTurnUpdatedDuration() throws Exception {
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -8714,7 +8704,7 @@ public class M2PrivateTests {
 	@Test(timeout = 3000)
 	public void testEndTurnRemovesStunnedChampion2() throws Exception {
 		
-		ArrayList<Object> newGame = (ArrayList<Object>) createGameAndTeams();
+		ArrayList<Object> newGame = createGameAndTeams();
 		Object createdGame = newGame.get(0);
 		ArrayList<Object> firstTeam = (ArrayList<Object>) newGame.get(1);
 		ArrayList<Object> secondTeam = (ArrayList<Object>) newGame.get(2);
@@ -11160,13 +11150,13 @@ public class M2PrivateTests {
 		args[6] = int.class;
 		@SuppressWarnings("unchecked")
 		Object h = c.getConstructor(args)
-				.newInstance(new Object[] { (String) "hero2", (int) 1, (int) 2, (int) 3, (int) 4, // speed
-						(int) 5, (int) 6 });
+				.newInstance("hero2", 1, 2, 3, 4, // speed
+						5, 6);
 
 		@SuppressWarnings("unchecked")
 		Object h2 = c.getConstructor(args)
-				.newInstance(new Object[] { (String) "hero1", (int) 1, (int) 2, (int) 3, (int) 14, // speed
-						(int) 15, (int) 6 });
+				.newInstance("hero1", 1, 2, 3, 14, // speed
+						15, 6);
 		Method compareTo = h.getClass().getMethod("compareTo", Object.class);
 		int r = (int) compareTo.invoke(h, h2);
 		assertTrue(
@@ -11190,7 +11180,7 @@ public class M2PrivateTests {
 	}
 
 	private boolean isPositive(int i) {
-		return i > 0 ? true : false;
+		return i > 0;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -11968,10 +11958,10 @@ public class M2PrivateTests {
 
 		Character c = name.charAt(0);
 
-		String methodName = "get" + Character.toUpperCase(c) + name.substring(1, name.length());
+		String methodName = "get" + Character.toUpperCase(c) + name.substring(1);
 
 		if (value.getClass().equals(Boolean.class))
-			methodName = "is" + Character.toUpperCase(c) + name.substring(1, name.length());
+			methodName = "is" + Character.toUpperCase(c) + name.substring(1);
 
 		Method m = createdObject.getClass().getMethod(methodName);
 		assertEquals(
@@ -12040,7 +12030,7 @@ public class M2PrivateTests {
 		f.setAccessible(true);
 
 		Character c = name.charAt(0);
-		String methodName = "set" + Character.toUpperCase(c) + name.substring(1, name.length());
+		String methodName = "set" + Character.toUpperCase(c) + name.substring(1);
 		Method m = createdObject.getClass().getMethod(methodName, type);
 		m.invoke(createdObject, setValue);
 
@@ -12073,7 +12063,7 @@ public class M2PrivateTests {
 		f.setAccessible(true);
 
 		Character c = name.charAt(0);
-		String methodName = "set" + Character.toUpperCase(c) + name.substring(1, name.length());
+		String methodName = "set" + Character.toUpperCase(c) + name.substring(1);
 		Method m;
 		try {
 			m = createdObject.getClass().getMethod(methodName, type);

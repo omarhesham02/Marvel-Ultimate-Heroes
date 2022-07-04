@@ -7,13 +7,14 @@ import model.world.Damageable;
 
 public class HealingAbility extends Ability {
 	private int healAmount;
-	public HealingAbility(String name, int cost, int baseCoolDown,int castRange, AreaOfEffect area, int required,int healAmount) throws Exception {
+	public HealingAbility(String name, int cost, int baseCoolDown,int castRange, AreaOfEffect area, int required,int healAmount) {
 		
 		super(name, cost, baseCoolDown, castRange, area, required);
 		this.healAmount=healAmount;
 		
 	}
-	
+
+	@Override
 	public String toString() {
 		return super.toString() + "Heal Amount: " + this.healAmount + "\n" + "\n";
 	}
@@ -31,9 +32,8 @@ public class HealingAbility extends Ability {
 			
 			int hp = d.getCurrentHP() + this.getHealAmount();
 			
-				if (d instanceof Champion) {
-					Champion c = (Champion) d;
-				
+				if (d instanceof Champion c) {
+
 					c.setCurrentHP(hp);
 					
 				

@@ -8,7 +8,7 @@ public class Embrace extends Effect {
 		super("Embrace", duration, EffectType.BUFF);
 	}
 
-	public void apply(Champion c) throws CloneNotSupportedException  {
+	public void apply(Champion c) {
 	
 		c.setCurrentHP((int) (c.getCurrentHP() + (c.getMaxHP() * 0.2)));
 		c.setMana((int) (c.getMana() * 1.2));

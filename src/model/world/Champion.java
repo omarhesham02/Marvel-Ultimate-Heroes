@@ -7,24 +7,24 @@ import model.effects.*;
 
 public abstract class Champion implements Damageable, Comparable<Object> {
 
-		  private String name;
-	      private int maxHP;
+		  private final String name;
+	      private final int maxHP;
 		  private int currentHP;
 	      private int mana;
 		  private int maxActionPointsPerTurn;
 	      private int currentActionPoints;
-	      private int attackRange;
+	      private final int attackRange;
 		  private int attackDamage;
 		  private int speed;
 		  
-          private ArrayList<Ability> abilities = new ArrayList<>();
-	      private ArrayList<Effect> appliedEffects = new ArrayList<>();
+          private final ArrayList<Ability> abilities = new ArrayList<>();
+	      private final ArrayList<Effect> appliedEffects = new ArrayList<>();
 
 	      private Condition condition;
 	      private Point location;
 	      
 	      
-    public Champion (String name, int maxHP, int mana, int maxActions, int speed, int attackRange, int attackDamage) throws Exception {
+    public Champion (String name, int maxHP, int mana, int maxActions, int speed, int attackRange, int attackDamage) {
     	
 	      this.name = name;
 	      this.maxHP = maxHP;
@@ -54,7 +54,7 @@ public abstract class Champion implements Damageable, Comparable<Object> {
     	+ "Attack Damage: " + this.attackDamage + "\n" 
     	+ "Speed: " + this.speed + "\n" 
     	+ "Condition: " + this.condition + "\n"
-    	+ "Abilities: " + abilities.toString() + "\n"
+    	+ "Abilities: " + abilities + "\n"
     	+ "\n";
     }
     
@@ -78,10 +78,7 @@ public abstract class Champion implements Damageable, Comparable<Object> {
 		
 		if (currentHP > maxHP)
 			this.currentHP = maxHP;
-		else if (currentHP < 0)
-			this.currentHP = 0;
-		else
-			this.currentHP = currentHP;
+		else this.currentHP = Math.max(currentHP, 0);
 		
 	}
 
@@ -163,10 +160,7 @@ public abstract class Champion implements Damageable, Comparable<Object> {
 	public void setCurrentActionPoints(int currentActionPoints) {
 		if (currentActionPoints < 0)
 			this.currentActionPoints = 0;
-		else if (currentActionPoints >= maxActionPointsPerTurn) 
-			this.currentActionPoints = maxActionPointsPerTurn;
-		else 
-			this.currentActionPoints = currentActionPoints;
+		else this.currentActionPoints = Math.min(currentActionPoints, maxActionPointsPerTurn);
 
 	}
 
@@ -193,7 +187,7 @@ public abstract class Champion implements Damageable, Comparable<Object> {
 	}
 	
 	
-	public void removeEffectByName (String name) throws CloneNotSupportedException {
+	public void removeEffectByName (String name) {
 		for (Effect e : appliedEffects) {
 			if (e.getName().equals(name)) {
 				e.remove(this);
@@ -213,7 +207,7 @@ public abstract class Champion implements Damageable, Comparable<Object> {
 		}
 	}
 	
-	public void updateEffects () throws CloneNotSupportedException {
+	public void updateEffects () {
 		ArrayList<Effect> effectsToRemove = new ArrayList<>();
 		for (Effect e : getAppliedEffects()) {
 			e.setDuration(e.getDuration() - 1);
@@ -237,6 +231,6 @@ public abstract class Champion implements Damageable, Comparable<Object> {
 	}
 	
 	
-	public abstract void useLeaderAbility(ArrayList<Champion> targets) throws Exception;
+	public abstract void useLeaderAbility(ArrayList<Champion> targets);
 		
 }

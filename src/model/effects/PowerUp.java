@@ -14,17 +14,15 @@ public class PowerUp extends Effect {
 	}
 	
 	
-	public void apply (Champion c) throws CloneNotSupportedException {
+	public void apply (Champion c) {
 		
 		ArrayList<Ability> abilities = c.getAbilities();
 		
 		for (Ability a : abilities) {
-			if (a instanceof DamagingAbility) {
-				DamagingAbility da = (DamagingAbility) a;
+			if (a instanceof DamagingAbility da) {
 				da.setDamageAmount((int) Math.round((da.getDamageAmount() * 1.2)));
 				
-			} else if (a instanceof HealingAbility) {
-				HealingAbility ha = (HealingAbility) a;
+			} else if (a instanceof HealingAbility ha) {
 				ha.setHealAmount( (int) Math.round((ha.getHealAmount() * 1.2)));
 			}
 				
@@ -38,12 +36,10 @@ public class PowerUp extends Effect {
 		ArrayList<Ability> abilities = c.getAbilities();
 		
 		for (Ability a : abilities) {
-			if (a instanceof DamagingAbility) {
-				DamagingAbility da = (DamagingAbility) a;
+			if (a instanceof DamagingAbility da) {
 				da.setDamageAmount( (int) Math.round((da.getDamageAmount() / 1.2)));
 				
-			} else if (a instanceof HealingAbility) {
-				HealingAbility ha = (HealingAbility) a;
+			} else if (a instanceof HealingAbility ha) {
 				ha.setHealAmount( (int) Math.round((ha.getHealAmount() / 1.2)));
 			}
 			

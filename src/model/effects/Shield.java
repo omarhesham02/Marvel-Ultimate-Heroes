@@ -8,7 +8,7 @@ public class Shield extends Effect {
 		super("Shield", duration, EffectType.BUFF);
 	}
 	
-	public void apply (Champion c) throws CloneNotSupportedException  {
+	public void apply (Champion c) {
 		c.setSpeed((int) (c.getSpeed() * 1.02));
 	}
 	

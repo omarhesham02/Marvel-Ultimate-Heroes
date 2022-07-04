@@ -10,7 +10,7 @@ public class Root extends Effect {
 	}
 	
 	
-	public void apply (Champion c) throws CloneNotSupportedException   {
+	public void apply (Champion c) {
 
 		
 		if (c.getCondition() == Condition.KNOCKEDOUT || c.getCondition() == Condition.INACTIVE)

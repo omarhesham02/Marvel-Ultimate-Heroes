@@ -6,6 +6,6 @@ public enum AreaOfEffect {
 	SINGLETARGET,
 	TEAMTARGET,
 	DIRECTIONAL,
-	SURROUND;
+	SURROUND
 
 }
