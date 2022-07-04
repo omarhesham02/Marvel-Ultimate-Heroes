@@ -8,6 +8,7 @@ import model.world.*;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -24,11 +25,11 @@ public class Game {
 	private static ArrayList<Champion> availableChampions;
 	private static ArrayList<Ability> availableAbilities;
 	private final PriorityQueue turnOrder;
-	
-	private static final int BOARDHEIGHT = 5;
+
 	private static final int BOARDWIDTH = 5;
-	
-	
+	private static final int BOARDHEIGHT = 5;
+
+
 	public Game (Player firstPlayer, Player secondPlayer) {
 
 		this.firstPlayer = firstPlayer;
@@ -130,11 +131,12 @@ public class Game {
 		if (board[x][y] == null) {
 			board[x][y] = new Cover(x, y);
 			coverCount++;
+
 			}
 		}
 	}
 	
-	public static void loadAbilities(String filePath) throws Exception {
+	public static void loadAbilities(String filePath) throws IOException, IllegalStateException {
 	
 		
 		if (availableAbilities.size() >= 45)
@@ -200,7 +202,7 @@ public class Game {
 	
 	
 	
-	public static void loadChampions(String filePath) throws Exception {
+	public static void loadChampions(String filePath) throws IOException {
 		
 		BufferedReader br = new BufferedReader(new FileReader(filePath));
 		
@@ -228,23 +230,23 @@ public class Game {
 			switch (type) {
 				case "H" -> {
 					Hero H = new Hero(name, maxHP, mana, actions, speed, attackRange, attackDamage);
-					setAbilities(ability1name, H.getAbilities());
-					setAbilities(ability2name, H.getAbilities());
-					setAbilities(ability3name, H.getAbilities());
+					addAbilityByName(ability1name, H.getAbilities());
+					addAbilityByName(ability2name, H.getAbilities());
+					addAbilityByName(ability3name, H.getAbilities());
 					availableChampions.add(H);
 				}
 				case "V" -> {
 					Villain V = new Villain(name, maxHP, mana, actions, speed, attackRange, attackDamage);
-					setAbilities(ability1name, V.getAbilities());
-					setAbilities(ability2name, V.getAbilities());
-					setAbilities(ability3name, V.getAbilities());
+					addAbilityByName(ability1name, V.getAbilities());
+					addAbilityByName(ability2name, V.getAbilities());
+					addAbilityByName(ability3name, V.getAbilities());
 					availableChampions.add(V);
 				}
 				case "A" -> {
 					AntiHero A = new AntiHero(name, maxHP, mana, actions, speed, attackRange, attackDamage);
-					setAbilities(ability1name, A.getAbilities());
-					setAbilities(ability2name, A.getAbilities());
-					setAbilities(ability3name, A.getAbilities());
+					addAbilityByName(ability1name, A.getAbilities());
+					addAbilityByName(ability2name, A.getAbilities());
+					addAbilityByName(ability3name, A.getAbilities());
 					availableChampions.add(A);
 				}
 			}
@@ -255,7 +257,7 @@ public class Game {
 	
 
 	
-	private static void setAbilities(String abilityName, ArrayList<Ability> abilityList) {
+	private static void addAbilityByName(String abilityName, ArrayList<Ability> abilityList) {
 
 		for (Ability availableAbility : availableAbilities) {
 
@@ -263,7 +265,7 @@ public class Game {
 				return;
 
 			if (availableAbility.getName().equals(abilityName))     // Fetches ability by abilityName from availableAbilities
-				abilityList.add(availableAbility);            //  and adds it to the provided abilityList of the Champion
+				abilityList.add(availableAbility);            	   //  and adds it to the provided abilityList of the Champion
 
 		}
 	}
@@ -348,36 +350,29 @@ public class Game {
 		
 		Champion currChamp = getCurrentChampion();
 		Point currPoint = currChamp.getLocation();
-		Point destination = null;
+		Point destination;
 		int actionPoints = currChamp.getCurrentActionPoints();
 		
 		if (currChamp.getCondition() == Condition.ROOTED)
-			throw new UnallowedMovementException();
+			throw new UnallowedMovementException("Champion cannot move while rooted");
 		
 		if (actionPoints < 1)
-			throw new NotEnoughResourcesException();
-		
-		
-		switch (d) {
+			throw new NotEnoughResourcesException("Insufficient action points");
 
-		case RIGHT:
-			destination = new Point(currPoint.x, currPoint.y + 1);
-			break;
-		case LEFT:
-			destination = new Point(currPoint.x, currPoint.y - 1);
-			break;
-		case UP:
-			destination = new Point(currPoint.x + 1, currPoint.y);
-			break;
-		case DOWN:
-			destination = new Point(currPoint.x - 1, currPoint.y);
-			break;
-			
-		}
+
+		destination = switch (d) {
+			case RIGHT -> new Point(currPoint.x, currPoint.y + 1);
+			case LEFT -> new Point(currPoint.x, currPoint.y - 1);
+			case UP -> new Point(currPoint.x + 1, currPoint.y);
+			case DOWN -> new Point(currPoint.x - 1, currPoint.y);
+		};
 		
 
-		if (!isValidPoint(destination) || board[destination.x][destination.y] != null)
-				throw new UnallowedMovementException();
+		if (!isValidPoint(destination))
+			throw new UnallowedMovementException("Destination out of bounds");
+
+		if (board[destination.x][destination.y] != null)
+			throw new UnallowedMovementException("Unable to move to occupied cell");
 			
 		currChamp.setLocation(destination);
 		board[destination.x][destination.y] = currChamp;
@@ -420,10 +415,10 @@ public class Game {
 	
 		
 		if (currChamp.hasEffect("Disarm"))
-			throw new ChampionDisarmedException();
+			throw new ChampionDisarmedException("Champion cannot attack while disarmed");
 		
 		if (currChamp.getCurrentActionPoints() < 2)
-			throw new NotEnoughResourcesException();
+			throw new NotEnoughResourcesException("Insufficient action points");
 		
 		if (target == null) {
 			currChamp.setCurrentActionPoints(currChamp.getCurrentActionPoints() - 2);
@@ -491,8 +486,8 @@ public class Game {
 				
 				Point currPoint = new Point(i, j);
 		
-				if (isValidPoint(currPoint) && getDistance(currPoint, p) <= 2 && (board[i][j]) != null)
-					validTargetPoints.add(new Point(i, j));
+				if (isValidPoint(currPoint) && getDistance(currPoint, p) <= 2 && board[i][j] != null)
+					validTargetPoints.add(currPoint);
 			}
 		}
 		
@@ -525,16 +520,16 @@ public class Game {
 	private ArrayList<Champion> getEnemyTeam() {
 		
 		Champion currChamp = getCurrentChampion();
-		boolean firstPlayerTeam = false;
+		boolean isFirstPlayerTeam = false;
 			
 			for (Champion c : firstPlayer.getTeam()) {
 				if (c.equals(currChamp)) {
-					firstPlayerTeam = true;
+					isFirstPlayerTeam = true;
 					break;
 				}
 			}
 			
-			if (firstPlayerTeam) 
+			if (isFirstPlayerTeam)
 				return secondPlayer.getTeam();
 			else
 				return firstPlayer.getTeam();
@@ -546,12 +541,12 @@ public class Game {
 	public void castAbility (Ability a) throws AbilityUseException, InvalidTargetException, NotEnoughResourcesException, CloneNotSupportedException  {
 		
 		if (a.getCurrentCooldown() > 0)
-			throw new AbilityUseException();
+			throw new AbilityUseException("Ability is still on cooldown. Cooldown expires in " + a.getCurrentCooldown() + " turns");
 		
 		Champion currChamp = getCurrentChampion();
 		
 		if (currChamp.hasEffect("Silence"))
-			throw new AbilityUseException();
+			throw new AbilityUseException("Champion cannot use abilities while silenced");
 		
 		Point currPoint = currChamp.getLocation();
 		int manaCost = a.getManaCost();
@@ -560,9 +555,11 @@ public class Game {
 		AreaOfEffect area = a.getCastArea();
 		
 		
-		if (currChamp.getMana() < manaCost || currChamp.getCurrentActionPoints() < pointCost)
-			throw new NotEnoughResourcesException();
-				
+		if (currChamp.getMana() < manaCost)
+			throw new NotEnoughResourcesException("Insufficient mana. Action requires " + manaCost);
+
+		if (currChamp.getCurrentActionPoints() < pointCost)
+			throw new NotEnoughResourcesException("Insufficient action points.  Action requires " + pointCost);
 		
 		ArrayList<Champion> currChampTeam = getTeam();
 		ArrayList<Champion> enemyTeam = getEnemyTeam();
@@ -574,12 +571,12 @@ public class Game {
 				if (a instanceof HealingAbility) {
 					targets.add(currChamp);
 				} else if (a instanceof DamagingAbility) {
-					throw new InvalidTargetException();
+					throw new InvalidTargetException("Cannot cast damaging ability on yourself");
 				} else if (a instanceof CrowdControlAbility CC) {
 					Effect e = CC.getEffect();
 					
 					if (e.getType() == EffectType.DEBUFF)
-						throw new InvalidTargetException();
+						throw new InvalidTargetException("Cannot cast an ability that would apply a debuff on yourself");
 					else if (e.getType() == EffectType.BUFF)
 						targets.add(currChamp);
 				}
@@ -692,6 +689,8 @@ public class Game {
 							removeChampion((Champion) d);
 						
 					}
+				} else {
+					throw new IllegalArgumentException("Unexpected ability type: " + a.getClass());
 				}
 				break;
 			}
@@ -703,14 +702,14 @@ public class Game {
 	
 	
 	public void castAbility(Ability a, Direction d) throws AbilityUseException, NotEnoughResourcesException, CloneNotSupportedException {
-		
+
 		if (a.getCurrentCooldown() > 0)
-			throw new AbilityUseException();
+			throw new AbilityUseException("Ability is still on cooldown. Cooldown expires in " + a.getCurrentCooldown() + " turns");
 		
 		Champion currChamp = getCurrentChampion();
 		
 		if (currChamp.hasEffect("Silence"))
-			throw new AbilityUseException();
+			throw new AbilityUseException("Champion cannot use abilities  while silenced");
 		
 		
 		Point currPoint = currChamp.getLocation();
@@ -720,10 +719,13 @@ public class Game {
 		int manaCost = a.getManaCost();
 		int pointCost = a.getRequiredActionPoints();
 		int castRange = a.getCastRange();
-		
-	
-		if (currChamp.getMana() < manaCost || currChamp.getCurrentActionPoints() < pointCost)
-			throw new NotEnoughResourcesException();
+
+
+		if (currChamp.getMana() < manaCost)
+			throw new NotEnoughResourcesException("Insufficient mana. Action requires " + manaCost);
+
+		if (currChamp.getCurrentActionPoints() < pointCost)
+			throw new NotEnoughResourcesException("Insufficient action points. Action requires " + pointCost);
 
 		if (a instanceof HealingAbility ha) {
 			for (Damageable da : directionDamageables) {
@@ -771,20 +773,20 @@ public class Game {
 	
 	
 	public void castAbility (Ability a, int x, int y) throws AbilityUseException, NotEnoughResourcesException, InvalidTargetException, CloneNotSupportedException {
-				
+
 		if (a.getCurrentCooldown() > 0)
-			throw new AbilityUseException();
+			throw new AbilityUseException("Ability is still on cooldown. Cooldown expires in " + a.getCurrentCooldown() + " turns");
 		
 		Champion currChamp = getCurrentChampion();
 		
 		if (currChamp.hasEffect("Silence"))
-			throw new AbilityUseException();
+			throw new AbilityUseException("Champion cannot use abilities while silenced");
 		
 		Point currPoint = currChamp.getLocation();
 		Point targetLocation = new Point(x, y);
 		
 		if (!isValidPoint(targetLocation))
-			throw new InvalidTargetException();
+			throw new InvalidTargetException("Destination out of bounds");
 		
 		Damageable target = (Damageable) board[targetLocation.x][targetLocation.y];
 		ArrayList<Damageable> targets = new ArrayList<>(1);
@@ -794,16 +796,19 @@ public class Game {
 		int pointCost = a.getRequiredActionPoints();
 		int distance = getDistance(currPoint, targetLocation);
 		int abilityRange = a.getCastRange();
-		
-		
-		if (currChamp.getMana() < manaCost || currChamp.getCurrentActionPoints() < pointCost)
-			throw new NotEnoughResourcesException();
+
+
+		if (currChamp.getMana() < manaCost)
+			throw new NotEnoughResourcesException("Insufficient mana. Action requires " + manaCost);
+
+		if (currChamp.getCurrentActionPoints() < pointCost)
+			throw new NotEnoughResourcesException("Insufficient action points. Action requires " + pointCost);
 			
 		if (target == null)
-			throw new InvalidTargetException();
+			throw new InvalidTargetException("Cannot cast ability on an empty cell");
 		
 		if (distance > abilityRange)
-			throw new AbilityUseException();
+			throw new AbilityUseException("Target out of range");
 
 		ArrayList<Champion> currChampTeam = getTeam();
 		ArrayList<Champion> enemyTeam = getEnemyTeam();
@@ -813,19 +818,19 @@ public class Game {
 			targets.add(target);
 
 			if (target instanceof Cover)
-				throw new InvalidTargetException();
+				throw new InvalidTargetException("Cannot cast healing ability on a cover");
 			
 			if (currChampTeam.contains(target))
 					ha.execute(targets);
 			else
-				throw new InvalidTargetException();
+				throw new InvalidTargetException("Cannot cast healing ability on an emeny champion");
 			
 		} else if (a instanceof DamagingAbility da) {
 
 			if (enemyTeam.contains(target) || target instanceof Cover)
 				targets.add(target);
 			else
-				throw new InvalidTargetException();
+				throw new InvalidTargetException("Cannot cast a damaging ability on friendly champion");
 			
 			da.execute(targets);
 			
@@ -833,16 +838,20 @@ public class Game {
 			Effect e = CC.getEffect();
 			
 			if (target instanceof Cover)
-				throw new InvalidTargetException();
+				throw new InvalidTargetException("Cannot cast crowd control ability on a cover");
 			
-			if (e.getType() == EffectType.DEBUFF && enemyTeam.contains(target)) {
-				targets.add(target);
-			} else if (e.getType() == EffectType.BUFF && currChampTeam.contains(target)) {
-				targets.add(target);
-			} else {
-				throw new InvalidTargetException();
+			if (e.getType() == EffectType.DEBUFF) {
+				if (enemyTeam.contains(target))
+					targets.add(target);
+				else
+					throw new InvalidTargetException("Cannot cast an ability that would apply a debuff on a friendly champion");
+			} else if (e.getType() == EffectType.BUFF) {
+				if (currChampTeam.contains(target))
+					targets.add(target);
+				else
+					throw new InvalidTargetException("Cannot cast an ability that would apply a buff on an enemy champion");
 			}
-			
+
 			CC.execute(targets);
 		}
 		
@@ -868,10 +877,10 @@ public class Game {
 		Champion leader = null;
 		
 		if (!(currChamp.equals(firstPlayerLeader)) && !(currChamp.equals(secondPlayerLeader)))
-			throw new LeaderNotCurrentException();
+			throw new LeaderNotCurrentException("The champion currently playing is not your leader");
 		
 		if ((currChamp.equals(firstPlayerLeader) && firstLeaderAbilityUsed) || (currChamp.equals(secondPlayerLeader) && secondLeaderAbilityUsed))
-			throw new LeaderAbilityAlreadyUsedException();
+			throw new LeaderAbilityAlreadyUsedException("Leader ability already used");
 		
 		
 		if (currChamp.equals(firstPlayerLeader))
@@ -907,7 +916,7 @@ public class Game {
 			ah.useLeaderAbility(allChampionsExceptLeaders);
 		}
 
-		if (leader.equals(firstPlayerLeader))
+		if (firstPlayerLeader.equals(leader))
 			firstLeaderAbilityUsed = true;
 		else 
 			secondLeaderAbilityUsed = true;

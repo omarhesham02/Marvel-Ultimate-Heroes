@@ -13,7 +13,8 @@ public class HealingAbility extends Ability {
 		this.healAmount=healAmount;
 		
 	}
-	
+
+	@Override
 	public String toString() {
 		return super.toString() + "Heal Amount: " + this.healAmount + "\n" + "\n";
 	}
